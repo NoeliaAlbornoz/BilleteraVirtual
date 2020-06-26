@@ -62,7 +62,7 @@ public class Cuenta {
 	}
 
 	/*
-	*	Bidireccion atravez de un metodo que agrega a la lista.
+	*	Bidireccion a traves de un metodo que agrega a la lista.
 	*/
 	public void agregarTransaccion(Transaccion transaccion){
 		this.transacciones.add(transaccion);
