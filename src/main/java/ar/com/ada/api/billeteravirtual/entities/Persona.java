@@ -7,94 +7,88 @@ import javax.persistence.*;
 @Entity
 @Table(name = "persona")
 public class Persona {
-	
-	@Id
+
+    @Id
     @Column(name = "persona_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer personaId;
-
     private String nombre;
-
-	@Column(name = "pais_id")
+    @Column(name = "pais_id")
     private Integer paisId;
-
-	@Column(name = "tipo_documento")
-    private Integer tipoDocumento;
-    
+    @Column(name = "tipo_documento_id")
+    private Integer tipoDocumentoId;
     private String documento;
-
-	@Column(name = "fecha_nacimiento")
+    @Column(name = "fecha_nacimiento")
     private Date fechaNacimiento;
-
-	@OneToOne(mappedBy = "persona", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "persona", cascade = CascadeType.ALL)
     private Usuario usuario;
-
-	@OneToOne(mappedBy = "persona", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "persona", cascade = CascadeType.ALL)
     private Billetera billetera;
 
-	public Integer getPersonaId() {
-		return personaId;
-	}
+    public Integer getPersonaId() {
+        return personaId;
+    }
 
-	public void setPersonaId(Integer personaId) {
-		this.personaId = personaId;
-	}
+    public void setPersonaId(Integer personaId) {
+        this.personaId = personaId;
+    }
 
-	public String getNombre() {
-		return nombre;
-	}
+    public String getNombre() {
+        return nombre;
+    }
 
-	public void setNombre(String nombre) {
-		this.nombre = nombre;
-	}
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
 
-	public Date getFechaNacimiento() {
-		return fechaNacimiento;
-	}
+    public Date getFechaNacimiento() {
+        return fechaNacimiento;
+    }
 
-	public void setFechaNacimiento(Date fechaNacimiento) {
-		this.fechaNacimiento = fechaNacimiento;
-	}
+    public void setFechaNacimiento(Date fechaNacimiento) {
+        this.fechaNacimiento = fechaNacimiento;
+    }
 
-	public Usuario getUsuario() {
-		return usuario;
-	}
+    public Usuario getUsuario() {
+        return usuario;
+    }
 
-	public void setUsuario(Usuario usuario) {
-		this.usuario = usuario;
-		this.usuario.setPersona(this);
-	}
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
+        this.usuario.setPersona(this);
+    }
 
-	public Billetera getBilletera() {
-		return billetera;
-	}
+    public Billetera getBilletera() {
+        return billetera;
+    }
 
-	public void setBilletera(Billetera billetera) {
-		this.billetera = billetera;
-		this.billetera.setPersona(this);
-	}
+    public void setBilletera(Billetera billetera) {
+        this.billetera = billetera;
+        this.billetera.setPersona(this);
+    }
 
-	public Integer getPaisId() {
-		return paisId;
-	}
+    public Integer getPaisId() {
+        return paisId;
+    }
 
-	public void setPaisId(Integer paisId) {
-		this.paisId = paisId;
-	}
+    public void setPaisId(Integer paisId) {
+        this.paisId = paisId;
+    }
 
-	public String getDocumento() {
-		return documento;
-	}
+    public Integer getTipoDocumentoId() {
+        return tipoDocumentoId;
+    }
 
-	public void setDocumento(String documento) {
-		this.documento = documento;
-	}
+    public void setTipoDocumentoId(Integer tipoDocumentoId) {
+        this.tipoDocumentoId = tipoDocumentoId;
+    }
 
-	public Integer getTipoDocumento() {
-		return tipoDocumento;
-	}
+    public String getDocumento() {
+        return documento;
+    }
 
-	public void setTipoDocumento(Integer tipoDocumento) {
-		this.tipoDocumento = tipoDocumento;
-	}
+    public void setDocumento(String documento) {
+        this.documento = documento;
+    }
+
 }

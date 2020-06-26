@@ -12,16 +12,11 @@ public class Usuario {
 	@Column(name = "usuario_id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer usuarioId;
-
     private String username;
-
     private String password;
-
     private String email;
-
 	@Column(name = "fecha_login")
     private Date fechaLogin;
-
 	@OneToOne
 	@JoinColumn(name = "persona_id", referencedColumnName = "persona_id")
     private Persona persona;

@@ -13,39 +13,27 @@ public class Transaccion {
 	@Column(name = "transaccion_id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer transaccionId;
-
-    private Date fecha;
-
-	@Column(name = "estado_id")
-    private Integer estadoId;
-
-    private BigDecimal importe;
-
-    private String moneda;
-
-	@Column(name = "tipo_operacion")
-    private Integer tipoOperacion;
-
-	@Column(name = "concepto_operacion")
-    private String conceptoOperacion;
-
-    private String detalle;
-
-	@Column(name = "de_usuario")
-    private Integer deUsuarioId;
-
-	@Column(name = "a_usuario")
-    private Integer aUsuarioId;
-
-	@Column(name = "de_cuenta")
-    private Integer deCuentaId;
-
-	@Column(name = "a_cuenta")
-    private Integer aCuentaId;
-
-    @ManyToOne
+	@ManyToOne
 	@JoinColumn(name = "cuenta_id", referencedColumnName = "cuenta_id")
     private Cuenta cuenta;
+    private Date fecha;
+	@Column(name = "estado_id")
+    private Integer estadoId;
+    private BigDecimal importe;
+    private String moneda;
+	@Column(name = "tipo_operacion")
+    private Integer tipoOperacion;
+	@Column(name = "concepto_operacion")
+    private String conceptoOperacion;
+    private String detalle;
+	@Column(name = "de_usuario")
+    private Integer deUsuarioId;
+	@Column(name = "a_usuario")
+    private Integer aUsuarioId;
+	@Column(name = "de_cuenta")
+    private Integer deCuentaId;
+	@Column(name = "a_cuenta")
+    private Integer aCuentaId;
 
 	public Integer getTransaccionId() {
 		return transaccionId;
