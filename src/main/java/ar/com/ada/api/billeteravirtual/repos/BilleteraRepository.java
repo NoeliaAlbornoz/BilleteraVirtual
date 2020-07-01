@@ -8,6 +8,6 @@ import ar.com.ada.api.billeteravirtual.entities.Billetera;
 @Repository
 public interface BilleteraRepository extends JpaRepository<Billetera, Integer> {
 
-    
-    
+    Billetera findByBilleteraId(Integer id);
+
 }
