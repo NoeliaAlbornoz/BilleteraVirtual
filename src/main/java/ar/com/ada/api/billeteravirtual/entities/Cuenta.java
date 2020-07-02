@@ -12,14 +12,14 @@ public class Cuenta {
 	@Id
 	@Column(name = "cuenta_id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer cuentaId;
-    private BigDecimal saldo;
-    private String moneda;
+	private Integer cuentaId;
+	private BigDecimal saldo;
+	private String moneda;
 	@ManyToOne
 	@JoinColumn(name = "billetera_id", referencedColumnName = "billetera_id")
-    private Billetera billetera;
+	private Billetera billetera;
 	@OneToMany(mappedBy = "cuenta", cascade = CascadeType.ALL)
-    private List<Transaccion> transacciones = new ArrayList<>();
+	private List<Transaccion> transacciones = new ArrayList<>();
 
 	public Integer getCuentaId() {
 		return cuentaId;
@@ -62,11 +62,58 @@ public class Cuenta {
 	}
 
 	/*
-	*	Bidireccion a traves de un metodo que agrega a la lista.
-	*/
-	public void agregarTransaccion(Transaccion transaccion){
+	 * Bidirección a través de un método que agrega a la lista.
+	 */
+	public void agregarTransaccion(Transaccion transaccion) {
+
+		BigDecimal saldoNuevo;
+
 		this.transacciones.add(transaccion);
 		transaccion.setCuenta(this);
+
+		BigDecimal saldoActual = this.getSaldo();
+
+		if (transaccion.getTipoOperacion().equals(1)) {// Entrante
+
+			saldoNuevo = saldoActual.add(saldo);
+			this.setSaldo(saldoNuevo);
+
+		} else {// Saliente
+
+			saldoNuevo = saldoActual.subtract(saldo);
+			this.setSaldo(saldoNuevo);
+
+		}
+
 	}
-    
+
+	public Transaccion generarTransaccion(String conceptoOperacion, String detalle, BigDecimal importe,
+			Integer tipoOperacion) {
+
+		Transaccion transaccion = new Transaccion();
+
+		transaccion.setMoneda(moneda);
+		transaccion.setFecha(new Date());
+		transaccion.setConceptoOperacion(conceptoOperacion);
+		transaccion.setDetalle(detalle);
+		transaccion.setImporte(importe);
+		transaccion.setTipoOperacion(tipoOperacion);// 1 Entrada, 0 Salida
+		transaccion.setEstadoId(2);// -1 Rechazada 0 Pendiente 2 Aprobada
+
+		if (transaccion.getTipoOperacion() == 1) { // Entrada
+
+			transaccion.setaUsuarioId(billetera.getPersona().getUsuario().getUsuarioId());
+			transaccion.setaCuentaId(this.getCuentaId());
+
+		} else { // Salida
+
+			transaccion.setDeCuentaId(this.getCuentaId());
+			transaccion.setDeUsuarioId(billetera.getPersona().getUsuario().getUsuarioId());
+
+		}
+
+		return transaccion;
+
+	}
+
 }
