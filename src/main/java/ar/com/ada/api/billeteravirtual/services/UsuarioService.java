@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 
 import ar.com.ada.api.billeteravirtual.entities.Billetera;
@@ -24,16 +25,6 @@ public class UsuarioService {
 
     @Autowired
     BilleteraService billeteraService;
-
-    public Usuario buscarPorUsername(String username) {
-        return null;
-    }
-
-    public void login(String username, String password) {
-
-        // codigo
-
-    }
 
     /*
      * 2. Metodo: Iniciar Sesion 2.1-- recibe el username y la password 2.2-- vamos
@@ -84,10 +75,28 @@ public class UsuarioService {
 
         billeteraService.grabar(billetera);
 
-        billeteraService.cargarSaldo(new BigDecimal(500), "ARS", billetera.getBilleteraId(), "regalo", "Bienvenida por creacion de usuario");
+        billeteraService.cargarSaldo(new BigDecimal(500), "ARS", billetera.getBilleteraId(), "regalo",
+                "Bienvenida por creacion de usuario");
 
         return usuario;
 
+    }
+
+    public Usuario buscarPorUsername(String username) {
+        return repo.findByUsername(username);
+    }
+
+    public void login(String username, String password) {
+        /**
+         * Metodo IniciarSesion recibe usuario y contraseña validar usuario y contraseña
+         */
+
+        Usuario u = buscarPorUsername(username);
+
+        if (u == null || !u.getPassword().equals(Crypto.encrypt(password, u.getUsername()))) {
+
+            throw new BadCredentialsException("Usuario o contraseña invalida");
+        }
     }
 
 }
