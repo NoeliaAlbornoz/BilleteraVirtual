@@ -61,10 +61,6 @@ public class BilleteraService {
         
         cuenta.agregarTransaccion(transaccion);
 
-        BigDecimal saldoActual = cuenta.getSaldo();
-        BigDecimal saldoNuevo = saldoActual.add(saldo);
-        cuenta.setSaldo(saldoNuevo);
-
         this.grabar(billetera);
     }
 
@@ -81,6 +77,30 @@ public class BilleteraService {
     public Billetera buscarPorId(Integer id) {
 
         return repo.findByBilleteraId(id);
+
+    }
+
+    public void enviarSaldo(BigDecimal importe, String moneda, Integer billeteraOrigenId, Integer billeteraDestinoId, String concepto, String detalle) {
+
+        Billetera billeteraSaliente = this.buscarPorId(billeteraOrigenId);
+        Billetera billeteraEntrante = this.buscarPorId(billeteraDestinoId);
+
+        Cuenta cuentaSaliente = billeteraSaliente.getCuenta(moneda);
+        Cuenta cuentaEntrante = billeteraEntrante.getCuenta(moneda);
+
+        Transaccion tSaliente = new Transaccion();
+        Transaccion tEntrante = new Transaccion();
+
+        tSaliente = cuentaSaliente.generarTransaccion(concepto, detalle, importe, 1);
+        tSaliente.setaCuentaId(cuentaEntrante.getCuentaId());
+        tSaliente.setaUsuarioId(billeteraEntrante.getPersona().getUsuario().getUsuarioId());
+
+        tEntrante = cuentaEntrante.generarTransaccion(concepto, detalle, importe, 0);
+        tEntrante.setDeCuentaId(cuentaSaliente.getCuentaId());
+        tEntrante.setDeUsuarioId(billeteraSaliente.getPersona().getUsuario().getUsuarioId());
+
+        cuentaSaliente.agregarTransaccion(tSaliente);
+        cuentaEntrante.agregarTransaccion(tEntrante);
 
     }
 
