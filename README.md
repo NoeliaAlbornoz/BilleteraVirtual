@@ -1,1 +1,1 @@
-WEB API. Proyecto Spring Boot.  La Billetera Virtual es un sistema de  transferencia de dinero electrónico con el que se pueden hacer múltiples operaciones financieras. Se conecta a una base de datos MYSQL.
+WEB API. Proyecto Spring Boot.  La Billetera Virtual es un sistema de  transferencia de dinero electrónico con el que se pueden hacer múltiples operaciones financieras. Se conecta a una base de datos MYSQL. Se utilizó Postman para probar la WEB API.
