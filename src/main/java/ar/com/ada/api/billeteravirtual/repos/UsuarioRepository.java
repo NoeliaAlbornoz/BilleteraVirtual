@@ -4,8 +4,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import ar.com.ada.api.billeteravirtual.entities.*;
 
-
 public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
 
-    
+    public Usuario findByUsername(String userName);
+    public Usuario findByEmail(String email);
+
 }
