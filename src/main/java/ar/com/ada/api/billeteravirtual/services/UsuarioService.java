@@ -18,7 +18,7 @@ import ar.com.ada.api.billeteravirtual.security.Crypto;
 public class UsuarioService {
 
     @Autowired
-    UsuarioRepository repo;
+    UsuarioRepository usuarioRepository;
 
     @Autowired
     PersonaService personaService;
@@ -82,7 +82,7 @@ public class UsuarioService {
     }
 
     public Usuario buscarPorUsername(String username) {
-        return repo.findByUsername(username);
+        return usuarioRepository.findByUsername(username);
     }
 
     public void login(String username, String password) {
@@ -100,7 +100,7 @@ public class UsuarioService {
 
     public Usuario buscarPorEmail(String email){
       
-        return repo.findByEmail(email);
+        return usuarioRepository.findByEmail(email);
     }
 
 }

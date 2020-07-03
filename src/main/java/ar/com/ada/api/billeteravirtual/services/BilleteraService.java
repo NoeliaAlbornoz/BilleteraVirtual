@@ -62,7 +62,6 @@ public class BilleteraService {
 
         cuenta.agregarTransaccion(transaccion);
 
-        
         this.grabar(billetera);
 
     }
