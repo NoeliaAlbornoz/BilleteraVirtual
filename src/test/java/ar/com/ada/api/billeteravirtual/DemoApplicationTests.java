@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import ar.com.ada.api.billeteravirtual.entities.Billetera;
 import ar.com.ada.api.billeteravirtual.entities.Usuario;
 import ar.com.ada.api.billeteravirtual.security.Crypto;
 import ar.com.ada.api.billeteravirtual.services.*;
@@ -87,7 +88,7 @@ class DemoApplicationTests {
 	@Test
 	void CrearUsuarioTest() {
 
-		Usuario usuario = usuarioService.crearUsuario("Karen", 32, 5 , "21231123", new Date(), "karen@gmail.com", "a12345");
+		Usuario usuario = usuarioService.crearUsuario("Karen", 32, 1 , "21231123", new Date(), "karen@gmail.com", "a12345");
 		
 		//System.out.println("SALDO de usuario: " + usuario.getPersona().getBilletera().getCuenta("ARS").getSaldo());
 
@@ -97,6 +98,30 @@ class DemoApplicationTests {
 		assertTrue(usuario.getUsuarioId()==1);
 		assertTrue(usuario.getPersona().getBilletera().getCuenta("ARS").getSaldo().equals(new BigDecimal(500)));
 	
+	}
+
+	@Test
+	void EnviarSaldoTest() {
+		//Ya esta el usuario 1
+
+		Usuario usuarioEmisor = usuarioService.crearUsuario("Mario", 32, 1 , "21000123", new Date(), "mar123@gmail.com", "a12345");
+		Usuario usuarioReceptor = usuarioService.crearUsuario("Claudia", 32, 1 , "34000123", new Date(), "clau67@gmail.com", "a12345");
+
+		Integer bo = usuarioEmisor.getPersona().getBilletera().getBilleteraId();
+		Integer bd = usuarioReceptor.getPersona().getBilletera().getBilleteraId();
+
+		BigDecimal saldoOrigen = usuarioEmisor.getPersona().getBilletera().getCuenta("ARS").getSaldo();
+		BigDecimal saldoDestino = usuarioReceptor.getPersona().getBilletera().getCuenta("ARS").getSaldo();
+
+		billeteraService.enviarSaldo(new BigDecimal(1200), "ARS", bo, bd, "PRESTAMO", "no debe nada");
+
+		BigDecimal saldoOrigenActualizado = billeteraService.consultarSaldo(bo, "ARS");
+		BigDecimal saldoDestinoActualizado = billeteraService.consultarSaldo(bd, "ARS");
+
+		assertTrue(saldoOrigen.subtract(new BigDecimal(1200)).equals(saldoOrigenActualizado));
+		assertTrue(saldoDestino.add(new BigDecimal(1200)).equals(saldoDestinoActualizado));
+
+
 	}
 
 
