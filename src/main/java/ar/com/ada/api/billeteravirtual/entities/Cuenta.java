@@ -71,23 +71,18 @@ public class Cuenta {
 	public void agregarTransaccion(Transaccion transaccion) {
 
 		BigDecimal saldoNuevo;
+		BigDecimal saldoActual = this.getSaldo();
 
 		this.transacciones.add(transaccion);
 		transaccion.setCuenta(this);
 
-		BigDecimal saldoActual = this.getSaldo();
-
 		if (transaccion.getTipoOperacion().equals(1)) {// Entrante
-
 			saldoNuevo = saldoActual.add(saldo);
-			this.setSaldo(saldoNuevo);
-
 		} else {// Saliente
-
 			saldoNuevo = saldoActual.subtract(saldo);
-			this.setSaldo(saldoNuevo);
-
 		}
+
+		this.setSaldo(saldoNuevo);
 
 	}
 
