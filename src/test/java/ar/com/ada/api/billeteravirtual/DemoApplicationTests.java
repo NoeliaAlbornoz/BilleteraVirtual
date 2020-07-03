@@ -1,17 +1,30 @@
 package ar.com.ada.api.billeteravirtual;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.math.BigDecimal;
+import java.util.Date;
+
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import ar.com.ada.api.billeteravirtual.entities.Usuario;
 import ar.com.ada.api.billeteravirtual.security.Crypto;
+import ar.com.ada.api.billeteravirtual.services.*;
 
 @SpringBootTest
 class DemoApplicationTests {
 
+	@Autowired
+	UsuarioService usuarioService;
+	@Autowired
+	BilleteraService billeteraService;
+
+	@Test
+	void contextLoads() {
+		
+	}
 
 	@Test
 	void EncryptionTest() {
@@ -69,5 +82,23 @@ class DemoApplicationTests {
 		assertTrue(textoHasheado.equals(hashEsperado));
 
 	}
+
+	
+	@Test
+	void CrearUsuarioTest() {
+
+		Usuario usuario = usuarioService.crearUsuario("Karen", 32, 5 , "21231123", new Date(), "karen@gmail.com", "a12345");
+		
+		//System.out.println("SALDO de usuario: " + usuario.getPersona().getBilletera().getCuenta("ARS").getSaldo());
+
+		//Usuario usuarioVerificado = usuarioService.buscarPorUsername(usuario.getUsername());
+
+		//assertTrue(usuario.getUsuarioId() == usuarioVerificado.getUsuarioId());
+		assertTrue(usuario.getUsuarioId()==1);
+		assertTrue(usuario.getPersona().getBilletera().getCuenta("ARS").getSaldo().equals(new BigDecimal(500)));
+	
+	}
+
+
 
 }
