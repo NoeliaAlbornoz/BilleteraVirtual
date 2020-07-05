@@ -72,14 +72,16 @@ public class Cuenta {
 
 		BigDecimal saldoNuevo;
 		BigDecimal saldoActual = this.getSaldo();
+		BigDecimal importe = transaccion.getImporte();
+		
 
 		this.transacciones.add(transaccion);
 		transaccion.setCuenta(this);
 
 		if (transaccion.getTipoOperacion().equals(1)) {// Entrante
-			saldoNuevo = saldoActual.add(saldo);
+			saldoNuevo = saldoActual.add(importe);
 		} else {// Saliente
-			saldoNuevo = saldoActual.subtract(saldo);
+			saldoNuevo = saldoActual.subtract(importe);
 		}
 
 		this.setSaldo(saldoNuevo);
