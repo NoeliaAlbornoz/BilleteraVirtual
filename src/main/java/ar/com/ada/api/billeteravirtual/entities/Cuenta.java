@@ -73,7 +73,6 @@ public class Cuenta {
 		BigDecimal saldoNuevo;
 		BigDecimal saldoActual = this.getSaldo();
 		BigDecimal importe = transaccion.getImporte();
-		
 
 		this.transacciones.add(transaccion);
 		transaccion.setCuenta(this);
@@ -101,19 +100,36 @@ public class Cuenta {
 		transaccion.setTipoOperacion(tipoOperacion);// 1 Entrada, 0 Salida
 		transaccion.setEstadoId(2);// -1 Rechazada 0 Pendiente 2 Aprobada
 
-		if (transaccion.getTipoOperacion() == 1) { // Entrada
+		if(transaccion.getConceptoOperacion().equals("recarga")) {
 
-			transaccion.setaUsuarioId(billetera.getPersona().getUsuario().getUsuarioId());
-			transaccion.setaCuentaId(this.getCuentaId());
+			this.recargar(transaccion);
 
-		} else { // Salida
+		} else {
 
-			transaccion.setDeCuentaId(this.getCuentaId());
-			transaccion.setDeUsuarioId(billetera.getPersona().getUsuario().getUsuarioId());
+			if (transaccion.getTipoOperacion() == 1) { // Entrada
+
+				transaccion.setaUsuarioId(billetera.getPersona().getUsuario().getUsuarioId());
+				transaccion.setaCuentaId(this.getCuentaId());
+	
+			} else { // Salida
+	
+				transaccion.setDeCuentaId(this.getCuentaId());
+				transaccion.setDeUsuarioId(billetera.getPersona().getUsuario().getUsuarioId());
+	
+			}
 
 		}
 
 		return transaccion;
+
+	}
+
+	public void recargar(Transaccion transaccion) {
+
+		transaccion.setaUsuarioId(billetera.getPersona().getUsuario().getUsuarioId());
+		transaccion.setaCuentaId(this.getCuentaId());
+		transaccion.setDeCuentaId(this.getCuentaId());
+		transaccion.setDeUsuarioId(billetera.getPersona().getUsuario().getUsuarioId());
 
 	}
 
