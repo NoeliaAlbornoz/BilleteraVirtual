@@ -88,24 +88,23 @@ class DemoApplicationTests {
 	@Test
 	void CrearUsuarioTest() {
 
-		Usuario usuario = usuarioService.crearUsuario("Karen", 32, 1 , "21231123", new Date(), "karen@gmail.com", "a12345");
+		Usuario usuario = usuarioService.crearUsuario("E", 32, 1 , "5", new Date(), "E@gmail.com", "E");
 		
 		//System.out.println("SALDO de usuario: " + usuario.getPersona().getBilletera().getCuenta("ARS").getSaldo());
 
 		//Usuario usuarioVerificado = usuarioService.buscarPorUsername(usuario.getUsername());
 
 		//assertTrue(usuario.getUsuarioId() == usuarioVerificado.getUsuarioId());
-		assertTrue(usuario.getUsuarioId()==1);
+		assertTrue(usuario.getUsuarioId()==35);
 		assertTrue(usuario.getPersona().getBilletera().getCuenta("ARS").getSaldo().equals(new BigDecimal(500)));
 	
 	}
 
 	@Test
 	void EnviarSaldoTest() {
-		//Ya esta el usuario 1
 
-		Usuario usuarioEmisor = usuarioService.crearUsuario("Mario", 32, 1 , "21000123", new Date(), "mar123@gmail.com", "a12345");
-		Usuario usuarioReceptor = usuarioService.crearUsuario("Claudia", 32, 1 , "34000123", new Date(), "clau67@gmail.com", "a12345");
+		Usuario usuarioEmisor = usuarioService.crearUsuario("Santiago", 32, 1 , "45", new Date(), "sis@gmail.com", "sa");
+		Usuario usuarioReceptor = usuarioService.crearUsuario("Noelia", 32, 1 , "178", new Date(), "yui@gmail.com", "nga");
 
 		Integer bo = usuarioEmisor.getPersona().getBilletera().getBilleteraId();
 		Integer bd = usuarioReceptor.getPersona().getBilletera().getBilleteraId();
@@ -113,17 +112,14 @@ class DemoApplicationTests {
 		BigDecimal saldoOrigen = usuarioEmisor.getPersona().getBilletera().getCuenta("ARS").getSaldo();
 		BigDecimal saldoDestino = usuarioReceptor.getPersona().getBilletera().getCuenta("ARS").getSaldo();
 
-		billeteraService.enviarSaldo(new BigDecimal(1200), "ARS", bo, bd, "PRESTAMO", "no debe nada");
+		billeteraService.enviarSaldo(new BigDecimal(100), "ARS", bo, bd, "envio", "pago");
 
-		BigDecimal saldoOrigenActualizado = billeteraService.consultarSaldo(bo, "ARS");
-		BigDecimal saldoDestinoActualizado = billeteraService.consultarSaldo(bd, "ARS");
+		BigDecimal soa = billeteraService.consultarSaldo(bo, "ARS");
+		BigDecimal sda = billeteraService.consultarSaldo(bd, "ARS");
 
-		assertTrue(saldoOrigen.subtract(new BigDecimal(1200)).equals(saldoOrigenActualizado));
-		assertTrue(saldoDestino.add(new BigDecimal(1200)).equals(saldoDestinoActualizado));
-
+		assertTrue((saldoOrigen.subtract(new BigDecimal(100))).equals(soa));
+		assertTrue((saldoDestino.add(new BigDecimal(100))).equals(sda));
 
 	}
-
-
 
 }
