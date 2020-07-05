@@ -1,7 +1,6 @@
 package ar.com.ada.api.billeteravirtual.services;
 
 import java.math.BigDecimal;
-import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -46,19 +45,7 @@ public class BilleteraService {
 
         Cuenta cuenta = billetera.getCuenta(moneda);
 
-        Transaccion transaccion = new Transaccion();
-        // transaccion.setCuenta(cuenta);
-        transaccion.setMoneda(moneda);
-        transaccion.setFecha(new Date());
-        transaccion.setConceptoOperacion(conceptoOperacion);
-        transaccion.setDetalle(detalle);
-        transaccion.setImporte(saldo);
-        transaccion.setTipoOperacion(1);// 1 Entrada, 0 Salida
-        transaccion.setEstadoId(2);// -1 Rechazada 0 Pendiente 2 Aprobada
-        transaccion.setDeCuentaId(cuenta.getCuentaId());
-        transaccion.setDeUsuarioId(billetera.getPersona().getUsuario().getUsuarioId());
-        transaccion.setaUsuarioId(billetera.getPersona().getUsuario().getUsuarioId());
-        transaccion.setaCuentaId(cuenta.getCuentaId());
+        Transaccion transaccion = cuenta.generarTransaccion(conceptoOperacion, detalle, saldo, 1);
 
         cuenta.agregarTransaccion(transaccion);
 
@@ -105,14 +92,11 @@ public class BilleteraService {
         Cuenta cuentaSaliente = billeteraSaliente.getCuenta(moneda);
         Cuenta cuentaEntrante = billeteraEntrante.getCuenta(moneda);
 
-        Transaccion tSaliente = new Transaccion();
-        Transaccion tEntrante = new Transaccion();
-
-        tSaliente = cuentaSaliente.generarTransaccion(concepto, detalle, importe, 1);
+        Transaccion tSaliente = cuentaSaliente.generarTransaccion(concepto, detalle, importe, 0);
         tSaliente.setaCuentaId(cuentaEntrante.getCuentaId());
         tSaliente.setaUsuarioId(billeteraEntrante.getPersona().getUsuario().getUsuarioId());
 
-        tEntrante = cuentaEntrante.generarTransaccion(concepto, detalle, importe, 0);
+        Transaccion tEntrante = cuentaEntrante.generarTransaccion(concepto, detalle, importe, 1);
         tEntrante.setDeCuentaId(cuentaSaliente.getCuentaId());
         tEntrante.setDeUsuarioId(billeteraSaliente.getPersona().getUsuario().getUsuarioId());
 
