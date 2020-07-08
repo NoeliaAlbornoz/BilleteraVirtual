@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import ar.com.ada.api.billeteravirtual.entities.Billetera;
 import ar.com.ada.api.billeteravirtual.entities.Cuenta;
-
+import ar.com.ada.api.billeteravirtual.entities.Transaccion.ResultadoTransaccionEnum;
 import ar.com.ada.api.billeteravirtual.models.request.CargaSaldoRequest;
 import ar.com.ada.api.billeteravirtual.models.request.EnvioSaldoRequest;
 import ar.com.ada.api.billeteravirtual.models.response.SaldoResponse;
@@ -90,12 +90,22 @@ public class BilleteraController {
 
         TransaccionResponse response = new TransaccionResponse();
 
-        billeteraService.enviarSaldo(envio.importe, envio.moneda, id, envio.email, "envio", "pago");
+        ResultadoTransaccionEnum resultado = billeteraService.enviarSaldo(envio.importe, envio.moneda, id, envio.email,
+                "envio", "pago");
 
-        response.isOk = true;
-        response.message = "Se envio el saldo exitosamente";
-        
-        return ResponseEntity.ok(response);
-     }
+        if (resultado == ResultadoTransaccionEnum.INICIADA) {
+
+            response.isOk = true;
+            response.message = "Se envio el saldo exitosamente";
+
+            return ResponseEntity.ok(response);
+
+        }
+        response.isOk = false;
+        response.message = "Error" + resultado;
+
+        return ResponseEntity.badRequest().body(response);
+
+    }
 
 }
