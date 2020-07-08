@@ -114,11 +114,11 @@ class DemoApplicationTests {
 
 		billeteraService.enviarSaldo(new BigDecimal(100), "ARS", bo, bd, "envio", "pago");
 
-		BigDecimal soa = billeteraService.consultarSaldo(bo, "ARS");
-		BigDecimal sda = billeteraService.consultarSaldo(bd, "ARS");
+		BigDecimal saldoOrigenActualizado = billeteraService.consultarSaldo(bo, "ARS");
+		BigDecimal saldoDestinoActualizado = billeteraService.consultarSaldo(bd, "ARS");
 
-		assertTrue((saldoOrigen.subtract(new BigDecimal(100))).equals(soa));
-		assertTrue((saldoDestino.add(new BigDecimal(100))).equals(sda));
+		assertTrue((saldoOrigen.subtract(new BigDecimal(100))).compareTo(saldoOrigenActualizado) == 0);
+		assertTrue((saldoDestino.add(new BigDecimal(100))).compareTo(saldoDestinoActualizado) == 0);
 
 	}
 
