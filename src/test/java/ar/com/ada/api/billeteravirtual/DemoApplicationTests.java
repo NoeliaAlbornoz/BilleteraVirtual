@@ -89,7 +89,7 @@ class DemoApplicationTests {
 	@Test
 	void CrearUsuarioTest() {
 
-		Usuario usuario = usuarioService.crearUsuario("E", 32, 1 , "5", new Date(), "E@gmail.com", "E");
+		Usuario usuario = usuarioService.crearUsuario("Carlos Mora", 32, 1 , "12345678", new Date(), "carlitos@gmail.com", "carlitos");
 		
 		//System.out.println("SALDO de usuario: " + usuario.getPersona().getBilletera().getCuenta("ARS").getSaldo());
 
@@ -104,8 +104,8 @@ class DemoApplicationTests {
 	@Test
 	void EnviarSaldoTest() {
 
-		Usuario usuarioEmisor = usuarioService.crearUsuario("Santiago", 32, 1 , "45", new Date(), "sis@gmail.com", "sa");
-		Usuario usuarioReceptor = usuarioService.crearUsuario("Noelia", 32, 1 , "178", new Date(), "yui@gmail.com", "nga");
+		Usuario usuarioEmisor = usuarioService.crearUsuario("Santino Versalles", 32, 1 , "45666666", new Date(), "sv@gmail.com", "sativ");
+		Usuario usuarioReceptor = usuarioService.crearUsuario("Natalia Ruiz", 32, 1 , "178789000", new Date(), "nr@gmail.com", "natyr");
 
 		Integer bo = usuarioEmisor.getPersona().getBilletera().getBilleteraId();
 		Integer bd = usuarioReceptor.getPersona().getBilletera().getBilleteraId();
@@ -126,10 +126,10 @@ class DemoApplicationTests {
 	@Test
 	void EnviarSaldoMonedaARSTest() {
 
-		Usuario usuarioEmisor = usuarioService.crearUsuario("Karen Envia", 32, 5, "21231123", new Date(),
-				"karenenvia@gmail.com", "a12345");
-		Usuario usuarioReceptor = usuarioService.crearUsuario("Claudia Recibe", 32, 5, "21231123", new Date(),
-				"claudiarecibe@gmail.com", "a12345");
+		Usuario usuarioEmisor = usuarioService.crearUsuario("Karen Santos", 32, 5, "21231000", new Date(),
+				"karenenvia@gmail.com", "a125");
+		Usuario usuarioReceptor = usuarioService.crearUsuario("Claudia Rimollo", 32, 5, "21231100", new Date(),
+				"claudiarecibe@gmail.com", "a12");
 
 		Integer borigen = usuarioEmisor.getPersona().getBilletera().getBilleteraId();
 		Integer bdestino = usuarioReceptor.getPersona().getBilletera().getBilleteraId();
@@ -140,7 +140,7 @@ class DemoApplicationTests {
 		BigDecimal saldoAEnviar = new BigDecimal(200);
 
 		ResultadoTransaccionEnum resultado = billeteraService.enviarSaldo(saldoAEnviar, "ARS", borigen, bdestino,
-				"PRESTAMO", "ya no me debes nada");
+		"envio", "pago");
 
 		BigDecimal saldoOrigenActualizado = billeteraService.consultarSaldo(borigen, "ARS");
 		BigDecimal saldoDestinoActualizado = billeteraService.consultarSaldo(bdestino, "ARS");
@@ -171,10 +171,10 @@ class DemoApplicationTests {
 	@Test
 	void EnviarSaldoMonedaUSDSinSALDOUSDTest() {
 
-		Usuario usuarioEmisor = usuarioService.crearUsuario("Karen Envia", 32, 5, "21231123", new Date(),
-				"karenenvia@gmail.com", "a12345");
-		Usuario usuarioReceptor = usuarioService.crearUsuario("Claudia Recibe", 32, 5, "21231123", new Date(),
-				"claudiarecibe@gmail.com", "a12345");
+		Usuario usuarioEmisor = usuarioService.crearUsuario("Karen Manzano", 32, 5, "34231123", new Date(),
+				"karenenv@gmail.com", "a1234");
+		Usuario usuarioReceptor = usuarioService.crearUsuario("Claudia Sosa", 32, 5, "45231123", new Date(),
+				"claudiarec@gmail.com", "a2345");
 
 		Integer borigen = usuarioEmisor.getPersona().getBilletera().getBilleteraId();
 		Integer bdestino = usuarioReceptor.getPersona().getBilletera().getBilleteraId();
@@ -182,7 +182,7 @@ class DemoApplicationTests {
 		BigDecimal saldoAEnviar = new BigDecimal(200);
 
 		ResultadoTransaccionEnum resultado = billeteraService.enviarSaldo(saldoAEnviar, "USD", borigen, bdestino,
-				"PRESTAMO", "ya no me debes nada");
+		"envio", "pago");
 
 		assertTrue(resultado == ResultadoTransaccionEnum.SALDO_INSUFICIENTE, "El resultado fue " + resultado);
 
@@ -191,16 +191,16 @@ class DemoApplicationTests {
 	@Test
 	void EnviarSaldoNegativoTest() {
 
-		Usuario usuarioEmisor = usuarioService.crearUsuario("Karen Envia", 32, 5, "21231123", new Date(),
-				"karenenvia@gmail.com", "a12345");
-		Usuario usuarioReceptor = usuarioService.crearUsuario("Claudia Recibe", 32, 5, "21231123", new Date(),
-				"claudiarecibe@gmail.com", "a12345");
+		Usuario usuarioEmisor = usuarioService.crearUsuario("Manolo Tobares", 32, 5, "21000123", new Date(),
+				"manu@gmail.com", "ji2345");
+		Usuario usuarioReceptor = usuarioService.crearUsuario("Maria Wartz", 32, 5, "21230103", new Date(),
+				"mariaW@gmail.com", "lp12345");
 
 		Integer borigen = usuarioEmisor.getPersona().getBilletera().getBilleteraId();
 		Integer bdestino = usuarioReceptor.getPersona().getBilletera().getBilleteraId();
 
 		ResultadoTransaccionEnum resultado = billeteraService.enviarSaldo(new BigDecimal(-1200), "ARS", borigen,
-				bdestino, "PRESTAMO", "ya no me debes nada");
+				bdestino, "envio", "pago");
 
 		assertTrue(resultado == ResultadoTransaccionEnum.ERROR_IMPORTE_NEGATIVO, "El resultado fue " + resultado);
 
