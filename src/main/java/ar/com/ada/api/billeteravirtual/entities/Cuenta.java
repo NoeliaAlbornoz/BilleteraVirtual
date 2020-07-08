@@ -5,6 +5,8 @@ import java.util.*;
 
 import javax.persistence.*;
 
+import ar.com.ada.api.billeteravirtual.entities.Transaccion.TipoTransaccionEnum;
+
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
@@ -77,7 +79,7 @@ public class Cuenta {
 		this.transacciones.add(transaccion);
 		transaccion.setCuenta(this);
 
-		if (transaccion.getTipoOperacion().equals(1)) {// Entrante
+		if (transaccion.getTipoOperacion() == TipoTransaccionEnum.ENTRANTE) {// Entrante
 			saldoNuevo = saldoActual.add(importe);
 		} else {// Saliente
 			saldoNuevo = saldoActual.subtract(importe);
@@ -88,7 +90,7 @@ public class Cuenta {
 	}
 
 	public Transaccion generarTransaccion(String conceptoOperacion, String detalle, BigDecimal importe,
-			Integer tipoOperacion) {
+	TipoTransaccionEnum tipoOperacion) {
 
 		Transaccion transaccion = new Transaccion();
 
@@ -106,7 +108,7 @@ public class Cuenta {
 
 		} else {
 
-			if (transaccion.getTipoOperacion() == 1) { // Entrada
+			if (transaccion.getTipoOperacion() == TipoTransaccionEnum.ENTRANTE) { // Entrada
 
 				transaccion.setaUsuarioId(billetera.getPersona().getUsuario().getUsuarioId());
 				transaccion.setaCuentaId(this.getCuentaId());
