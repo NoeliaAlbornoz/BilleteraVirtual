@@ -1,7 +1,6 @@
 package ar.com.ada.api.billeteravirtual.controllers;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -27,13 +26,18 @@ public class BilleteraController {
     BilleteraService billeteraService;
 
     /*
-     * WEB Method 1: consultar saldo: GET URL: billeteras/{id}/saldos WEB Method 2:
-     * cargar saldo: POST URL: billeteras/{id}/recargas requestBody: { "moneda":
-     * "importe": } WEB Method 3: enviar saldo: POST URL: billeteras/{id}/envios
-     * requestBody: { "moneda": "importe": "email": "motivo": "detalleDelMotivo": }
+     * webMetodo 1: consultar saldo: GET URL:/billeteras/{id}/saldos
+     * URL:/billeteras/{id}/saldos/{moneda}
+     *  webMetodo 2: cargar saldo: POST
+     * URL:/billeteras/{id}/recargas requestBody: { "moneda": "importe": } 
+     * webMetodo
+     * 3:
+     * 
+     * enviar saldo: POST URL:/billetera/{id}/envios requestBody: { "moneda":
+     * "importe": "email": "motivo": "detalleDelMotivo": }
      */
 
-    @GetMapping("billeteras/{id}/saldos/{moneda}")
+    @GetMapping("/billeteras/{id}/saldos/{moneda}")
     public ResponseEntity<?> consultarSaldo(@PathVariable Integer id, @PathVariable String moneda) {
 
         SaldoResponse saldo = new SaldoResponse();
@@ -42,10 +46,9 @@ public class BilleteraController {
         saldo.moneda = moneda;
 
         return ResponseEntity.ok(saldo);
-
     }
 
-    @GetMapping("billeteras/{id}/saldos")
+    @GetMapping("/billeteras/{id}/saldos")
     public ResponseEntity<List<SaldoResponse>> consultarSaldo(@PathVariable Integer id) {
 
         Billetera billetera = new Billetera();
@@ -60,52 +63,50 @@ public class BilleteraController {
 
             saldo.saldo = cuenta.getSaldo();
             saldo.moneda = cuenta.getMoneda();
-
             saldos.add(saldo);
-
         }
-
         return ResponseEntity.ok(saldos);
-
     }
 
+    /**  webMetodo 2: cargar saldo: POST
+    * URL:/billeteras/{id}/recargas requestBody: { "moneda": "importe": } 
+    * webMetodo */ 
     @PostMapping("/billeteras/{id}/recargas")
-    public ResponseEntity<TransaccionResponse> cargarSaldo(@PathVariable Integer id,
-            @RequestBody CargaSaldoRequest recarga) {
+    public ResponseEntity<TransaccionResponse> cargarSaldo(@PathVariable Integer id, @RequestBody CargaSaldoRequest recarga){
 
         TransaccionResponse response = new TransaccionResponse();
 
         billeteraService.cargarSaldo(recarga.importe, recarga.moneda, id, "recarga", "porque quiero");
 
         response.isOk = true;
-        response.message = "Cargaste saldo exitosamente";
+        response.message = "Cargaste saldo exisotasamente";
 
         return ResponseEntity.ok(response);
 
     }
+    
+/*** enviar saldo: POST URL:/billeteras/{id}/envios requestBody: { "moneda":
+     * "importe": "email": "motivo": "detalleDelMotivo": }
+     */ 
 
-    @PostMapping("/billeteras/{id}/envios")
-    public ResponseEntity<TransaccionResponse> enviarSaldo(@PathVariable Integer id,
-            @RequestBody EnvioSaldoRequest envio) {
+     @PostMapping("/billeteras/{id}/envios")
+     public ResponseEntity<TransaccionResponse> enviarSaldo(@PathVariable Integer id, @RequestBody EnvioSaldoRequest envio){
 
         TransaccionResponse response = new TransaccionResponse();
+        ResultadoTransaccionEnum resultado = billeteraService.enviarSaldo(envio.importe, envio.moneda, id, envio.email, envio.motivo, envio.detalle);
 
-        ResultadoTransaccionEnum resultado = billeteraService.enviarSaldo(envio.importe, envio.moneda, id, envio.email,
-                "envio", "pago");
-
-        if (resultado == ResultadoTransaccionEnum.INICIADA) {
-
-            response.isOk = true;
-            response.message = "Se envio el saldo exitosamente";
-
-            return ResponseEntity.ok(response);
-
+        if(resultado == ResultadoTransaccionEnum.INICIADA){
+        response.isOk = true;
+        response.message = "Se envio el saldo exitosamente";
+        
+        return ResponseEntity.ok(response);
         }
         response.isOk = false;
-        response.message = "Error" + resultado;
+        response.message = "Hubo un error al realizar la operacion " + resultado;
 
         return ResponseEntity.badRequest().body(response);
 
-    }
+     }
+    
 
 }

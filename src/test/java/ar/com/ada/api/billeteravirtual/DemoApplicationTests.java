@@ -24,11 +24,6 @@ class DemoApplicationTests {
 	BilleteraService billeteraService;
 
 	@Test
-	void contextLoads() {
-		
-	}
-
-	@Test
 	void EncryptionTest() {
 
 		String textoClaro = "Este es un texto que todos pueden leer";
@@ -89,14 +84,14 @@ class DemoApplicationTests {
 	@Test
 	void CrearUsuarioTest() {
 
-		Usuario usuario = usuarioService.crearUsuario("Carlos Mora", 32, 1 , "12345678", new Date(), "carlitos@gmail.com", "carlitos");
+		Usuario usuario = usuarioService.crearUsuario("Carlos Mora", 32, 1 , "12345990", new Date(), "carlitos@gmail.com", "carlitos");
 		
 		//System.out.println("SALDO de usuario: " + usuario.getPersona().getBilletera().getCuenta("ARS").getSaldo());
 
 		//Usuario usuarioVerificado = usuarioService.buscarPorUsername(usuario.getUsername());
 
 		//assertTrue(usuario.getUsuarioId() == usuarioVerificado.getUsuarioId());
-		assertTrue(usuario.getUsuarioId()==35);
+		assertTrue(usuario.getUsuarioId() > 0);
 		assertTrue(usuario.getPersona().getBilletera().getCuenta("ARS").getSaldo().equals(new BigDecimal(500)));
 	
 	}
@@ -117,6 +112,17 @@ class DemoApplicationTests {
 
 		BigDecimal saldoOrigenActualizado = billeteraService.consultarSaldo(bo, "ARS");
 		BigDecimal saldoDestinoActualizado = billeteraService.consultarSaldo(bd, "ARS");
+
+		// 2 equals 2.0 => false
+		// 2.0 equals 2.0 => true
+		// 2.0 equals 2.00 => false
+		// 2.00
+		// se usa el compare, que devuelve 0 si son iguales, -1 si el primero es menor
+		// que el segundo
+		// y 1 si el primero es mayor que segundo.
+
+		System.out.println("SaldoOrigen" + saldoOrigen + " actualizado: " + saldoOrigenActualizado);
+		System.out.println("SaldoDestino" + saldoDestino + " actualizado: " + saldoDestinoActualizado);
 
 		assertTrue((saldoOrigen.subtract(new BigDecimal(100))).compareTo(saldoOrigenActualizado) == 0);
 		assertTrue((saldoDestino.add(new BigDecimal(100))).compareTo(saldoDestinoActualizado) == 0);

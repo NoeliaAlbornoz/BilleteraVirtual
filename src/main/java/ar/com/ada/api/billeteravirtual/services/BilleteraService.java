@@ -1,6 +1,7 @@
 package ar.com.ada.api.billeteravirtual.services;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -9,31 +10,30 @@ import ar.com.ada.api.billeteravirtual.entities.Billetera;
 import ar.com.ada.api.billeteravirtual.entities.Cuenta;
 import ar.com.ada.api.billeteravirtual.entities.Transaccion;
 import ar.com.ada.api.billeteravirtual.entities.Usuario;
-import ar.com.ada.api.billeteravirtual.repos.BilleteraRepository;
-
 import ar.com.ada.api.billeteravirtual.entities.Transaccion.ResultadoTransaccionEnum;
 import ar.com.ada.api.billeteravirtual.entities.Transaccion.TipoTransaccionEnum;
+import ar.com.ada.api.billeteravirtual.repos.BilleteraRepository;
 
 @Service
 public class BilleteraService {
 
     @Autowired
-    BilleteraRepository repo;
+    BilleteraRepository billeteraRepository;
 
     @Autowired
     UsuarioService usuarioService;
 
     public void grabar(Billetera billetera) {
-        repo.save(billetera);
+        billeteraRepository.save(billetera);
     }
 
     public void cargarSaldo(BigDecimal saldo, String moneda, Integer billeteraId, String conceptoOperacion,
             String detalle) {
 
-                Billetera billetera = this.buscarPorId(billeteraId);
+        Billetera billetera = this.buscarPorId(billeteraId);
 
-                cargarSaldo(saldo, moneda, billetera, conceptoOperacion, detalle);
-            }
+        cargarSaldo(saldo, moneda, billetera, conceptoOperacion, detalle);
+    }
 
     /**
      * Metodo cargarSaldo buscar billetera por id se identifica cuenta por moneda
@@ -48,7 +48,19 @@ public class BilleteraService {
 
         Cuenta cuenta = billetera.getCuenta(moneda);
 
-        Transaccion transaccion = cuenta.generarTransaccion(conceptoOperacion, detalle, saldo, TipoTransaccionEnum.ENTRANTE);
+        Transaccion transaccion = new Transaccion();
+        // transaccion.setCuenta(cuenta);
+        transaccion.setMoneda(moneda);
+        transaccion.setFecha(new Date());
+        transaccion.setConceptoOperacion(conceptoOperacion);
+        transaccion.setDetalle(detalle);
+        transaccion.setImporte(saldo);
+        transaccion.setTipoOperacion(TipoTransaccionEnum.ENTRANTE);// 1 Entrada, 0 Salida
+        transaccion.setEstadoId(2);// -1 Rechazada 0 Pendiente 2 Aprobada
+        transaccion.setDeCuentaId(cuenta.getCuentaId());
+        transaccion.setDeUsuarioId(billetera.getPersona().getUsuario().getUsuarioId());
+        transaccion.setaUsuarioId(billetera.getPersona().getUsuario().getUsuarioId());
+        transaccion.setaCuentaId(cuenta.getCuentaId());
 
         cuenta.agregarTransaccion(transaccion);
 
@@ -63,7 +75,7 @@ public class BilleteraService {
 
     public BigDecimal consultarSaldo(Integer billeteraId, String moneda) {
 
-        Billetera billetera = repo.findByBilleteraId(billeteraId);
+        Billetera billetera = billeteraRepository.findByBilleteraId(billeteraId);
 
         Cuenta cuenta = billetera.getCuenta(moneda);
 
@@ -73,10 +85,15 @@ public class BilleteraService {
 
     public Billetera buscarPorId(Integer id) {
 
-        return repo.findByBilleteraId(id);
+        return billeteraRepository.findByBilleteraId(id);
     }
 
-    /**
+    public ResultadoTransaccionEnum enviarSaldo(BigDecimal importe, String moneda, Integer billeteraOrigenId,
+            Integer billeteraDestinoId, String concepto, String detalle) {
+
+        if (importe.compareTo(new BigDecimal(0)) == -1)
+            return ResultadoTransaccionEnum.ERROR_IMPORTE_NEGATIVO;
+        /**
          * Metodo enviarSaldo buscar billetera por id se identifica cuenta por moneda
          * determinar importe a transferir billetera de origen y billetera destino
          * actualizar los saldos de las cuentas (resta en la origen y suma en la
@@ -85,12 +102,6 @@ public class BilleteraService {
          * ver delegaciones sobre entidades
          * 
          */
-
-    public ResultadoTransaccionEnum enviarSaldo(BigDecimal importe, String moneda, Integer billeteraOrigenId, Integer billeteraDestinoId,
-            String concepto, String detalle) {
-
-            if (importe.compareTo(new BigDecimal(0)) == -1)
-                return ResultadoTransaccionEnum.ERROR_IMPORTE_NEGATIVO;
 
         Billetera billeteraSaliente = this.buscarPorId(billeteraOrigenId);
 
@@ -115,11 +126,14 @@ public class BilleteraService {
         if (cuentaSaliente.getSaldo().compareTo(importe) == -1)
             return ResultadoTransaccionEnum.SALDO_INSUFICIENTE;
 
-        Transaccion tSaliente = cuentaSaliente.generarTransaccion(concepto, detalle, importe, TipoTransaccionEnum.SALIENTE);
+        Transaccion tSaliente = new Transaccion();
+        Transaccion tEntrante = new Transaccion();
+
+        tSaliente = cuentaSaliente.generarTransaccion(concepto, detalle, importe, TipoTransaccionEnum.SALIENTE);
         tSaliente.setaCuentaId(cuentaEntrante.getCuentaId());
         tSaliente.setaUsuarioId(billeteraEntrante.getPersona().getUsuario().getUsuarioId());
 
-        Transaccion tEntrante = cuentaEntrante.generarTransaccion(concepto, detalle, importe, TipoTransaccionEnum.ENTRANTE);
+        tEntrante = cuentaEntrante.generarTransaccion(concepto, detalle, importe, TipoTransaccionEnum.ENTRANTE);
         tEntrante.setDeCuentaId(cuentaSaliente.getCuentaId());
         tEntrante.setDeUsuarioId(billeteraSaliente.getPersona().getUsuario().getUsuarioId());
 

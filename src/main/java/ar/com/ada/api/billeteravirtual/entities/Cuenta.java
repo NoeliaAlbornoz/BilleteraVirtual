@@ -70,69 +70,51 @@ public class Cuenta {
 	/*
 	 * Bidirección a través de un método que agrega a la lista.
 	 */
-	public void agregarTransaccion(Transaccion transaccion) {
+	// Se hace relacion bidireccional con este metodo
+    public void agregarTransaccion(Transaccion transaccion) {
+        this.transacciones.add(transaccion);
+        transaccion.setCuenta(this);
 
-		BigDecimal saldoNuevo;
-		BigDecimal saldoActual = this.getSaldo();
-		BigDecimal importe = transaccion.getImporte();
+        BigDecimal saldoActual = this.getSaldo();
+        BigDecimal importe = transaccion.getImporte();
+        BigDecimal saldoNuevo;
 
-		this.transacciones.add(transaccion);
-		transaccion.setCuenta(this);
+        if (transaccion.getTipoOperacion() == TipoTransaccionEnum.ENTRANTE) {
 
-		if (transaccion.getTipoOperacion() == TipoTransaccionEnum.ENTRANTE) {// Entrante
-			saldoNuevo = saldoActual.add(importe);
-		} else {// Saliente
-			saldoNuevo = saldoActual.subtract(importe);
-		}
+            saldoNuevo = saldoActual.add(importe);
 
-		this.setSaldo(saldoNuevo);
+        } else {
 
-	}
+            saldoNuevo = saldoActual.subtract(importe);
 
-	public Transaccion generarTransaccion(String conceptoOperacion, String detalle, BigDecimal importe,
-	TipoTransaccionEnum tipoOperacion) {
+        }
+        this.setSaldo(saldoNuevo);
+    }
 
-		Transaccion transaccion = new Transaccion();
+    public Transaccion generarTransaccion(String conceptoOperacion, String detalle, BigDecimal importe,
+            TipoTransaccionEnum tipoOp) {
 
-		transaccion.setMoneda(moneda);
-		transaccion.setFecha(new Date());
-		transaccion.setConceptoOperacion(conceptoOperacion);
-		transaccion.setDetalle(detalle);
-		transaccion.setImporte(importe);
-		transaccion.setTipoOperacion(tipoOperacion);// 1 Entrada, 0 Salida
-		transaccion.setEstadoId(2);// -1 Rechazada 0 Pendiente 2 Aprobada
+        Transaccion transaccion = new Transaccion();
 
-		if(transaccion.getConceptoOperacion().equals("recarga")) {
+        transaccion.setMoneda(moneda);
+        transaccion.setFecha(new Date());
+        transaccion.setConceptoOperacion(conceptoOperacion);
+        transaccion.setDetalle(detalle);
+        transaccion.setImporte(importe);
+        transaccion.setTipoOperacion(tipoOp);// 1 Entrada, 0 Salida
+        transaccion.setEstadoId(2);// -1 Rechazada 0 Pendiente 2 Aprobada
 
-			this.recargar(transaccion);
+        if (transaccion.getTipoOperacion() == TipoTransaccionEnum.ENTRANTE) { // Es de entrada
 
-		} else {
+            transaccion.setaUsuarioId(billetera.getPersona().getUsuario().getUsuarioId());
+            transaccion.setaCuentaId(this.getCuentaId());
+        } else {
+            // Es de salida
+            transaccion.setDeCuentaId(this.getCuentaId());
+            transaccion.setDeUsuarioId(billetera.getPersona().getUsuario().getUsuarioId());
+        }
 
-			if (transaccion.getTipoOperacion() == TipoTransaccionEnum.ENTRANTE) { // Entrada
-
-				transaccion.setaUsuarioId(billetera.getPersona().getUsuario().getUsuarioId());
-				transaccion.setaCuentaId(this.getCuentaId());
-	
-			} else { // Salida
-	
-				transaccion.setDeCuentaId(this.getCuentaId());
-				transaccion.setDeUsuarioId(billetera.getPersona().getUsuario().getUsuarioId());
-	
-			}
-
-		}
-
-		return transaccion;
-
-	}
-
-	public void recargar(Transaccion transaccion) {
-
-		transaccion.setaUsuarioId(billetera.getPersona().getUsuario().getUsuarioId());
-		transaccion.setaCuentaId(this.getCuentaId());
-		transaccion.setDeCuentaId(this.getCuentaId());
-		transaccion.setDeUsuarioId(billetera.getPersona().getUsuario().getUsuarioId());
-
-	}
+        return transaccion;
+    }
 
 }
