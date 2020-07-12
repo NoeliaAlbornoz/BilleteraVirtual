@@ -14,6 +14,7 @@ import ar.com.ada.api.billeteravirtual.entities.Persona;
 import ar.com.ada.api.billeteravirtual.entities.Usuario;
 import ar.com.ada.api.billeteravirtual.repos.UsuarioRepository;
 import ar.com.ada.api.billeteravirtual.security.Crypto;
+import ar.com.ada.api.billeteravirtual.sistemas.comm.EmailService;
 
 @Service
 public class UsuarioService {
@@ -26,6 +27,9 @@ public class UsuarioService {
 
     @Autowired
     BilleteraService billeteraService;
+
+    @Autowired
+    EmailService emailService;
 
     /*
      * 2. Metodo: Iniciar Sesion 2.1-- recibe el username y la password 2.2-- vamos
@@ -78,6 +82,8 @@ public class UsuarioService {
 
         billeteraService.cargarSaldo(new BigDecimal(500), "ARS", billetera, "recarga",
                 "Bienvenida por creacion de usuario");
+
+        emailService.SendEmail(usuario.getEmail(), "Bienvenido a Billetera Virtual", "¡Enhorabuena! Te reagalamos 500 ARS como bienvenida a Billetera Virtual! :D");
 
         return usuario;
 
