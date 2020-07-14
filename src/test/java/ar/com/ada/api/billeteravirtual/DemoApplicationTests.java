@@ -11,6 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import ar.com.ada.api.billeteravirtual.entities.Billetera;
 import ar.com.ada.api.billeteravirtual.entities.Usuario;
+import ar.com.ada.api.billeteravirtual.entities.Transaccion.ConceptoTransaccionEnum;
 import ar.com.ada.api.billeteravirtual.entities.Transaccion.ResultadoTransaccionEnum;
 import ar.com.ada.api.billeteravirtual.security.Crypto;
 import ar.com.ada.api.billeteravirtual.services.*;
@@ -108,7 +109,7 @@ class DemoApplicationTests {
 		BigDecimal saldoOrigen = usuarioEmisor.getPersona().getBilletera().getCuenta("ARS").getSaldo();
 		BigDecimal saldoDestino = usuarioReceptor.getPersona().getBilletera().getCuenta("ARS").getSaldo();
 
-		billeteraService.enviarSaldo(new BigDecimal(100), "ARS", bo, bd, "envio", "pago");
+		billeteraService.enviarSaldo(new BigDecimal(100), "ARS", bo, bd, ConceptoTransaccionEnum.ENVIO, "pago");
 
 		BigDecimal saldoOrigenActualizado = billeteraService.consultarSaldo(bo, "ARS");
 		BigDecimal saldoDestinoActualizado = billeteraService.consultarSaldo(bd, "ARS");
@@ -146,7 +147,7 @@ class DemoApplicationTests {
 		BigDecimal saldoAEnviar = new BigDecimal(200);
 
 		ResultadoTransaccionEnum resultado = billeteraService.enviarSaldo(saldoAEnviar, "ARS", borigen, bdestino,
-		"envio", "pago");
+		ConceptoTransaccionEnum.ENVIO, "pago");
 
 		BigDecimal saldoOrigenActualizado = billeteraService.consultarSaldo(borigen, "ARS");
 		BigDecimal saldoDestinoActualizado = billeteraService.consultarSaldo(bdestino, "ARS");
@@ -188,7 +189,7 @@ class DemoApplicationTests {
 		BigDecimal saldoAEnviar = new BigDecimal(200);
 
 		ResultadoTransaccionEnum resultado = billeteraService.enviarSaldo(saldoAEnviar, "USD", borigen, bdestino,
-		"envio", "pago");
+		ConceptoTransaccionEnum.ENVIO, "pago");
 
 		assertTrue(resultado == ResultadoTransaccionEnum.SALDO_INSUFICIENTE, "El resultado fue " + resultado);
 
@@ -206,10 +207,29 @@ class DemoApplicationTests {
 		Integer bdestino = usuarioReceptor.getPersona().getBilletera().getBilleteraId();
 
 		ResultadoTransaccionEnum resultado = billeteraService.enviarSaldo(new BigDecimal(-1200), "ARS", borigen,
-				bdestino, "envio", "pago");
+				bdestino, ConceptoTransaccionEnum.ENVIO, "pago");
 
 		assertTrue(resultado == ResultadoTransaccionEnum.ERROR_IMPORTE_NEGATIVO, "El resultado fue " + resultado);
 
+	}
+
+	@Test
+	void EnviarSaldoConfirmaBilleteraInexistente(){
+
+		Usuario usuarioEmisor = usuarioService.crearUsuario("Matias Almeida", 32, 5, "10000000", new Date(),
+				"maty@gmail.com", "contrasenia1");
+		Usuario usuarioReceptor = usuarioService.crearUsuario("Malicha Suarez", 32, 5, "20000000", new Date(),
+				"molly@gmail.com", "contrasenia2");
+
+		Integer borigen = usuarioEmisor.getPersona().getBilletera().getBilleteraId();
+		Integer bdestino = 345; 
+
+		BigDecimal saldoAEnviar = new BigDecimal(200);
+
+		ResultadoTransaccionEnum resultado = billeteraService.enviarSaldo(saldoAEnviar, "USD", borigen, bdestino,
+		ConceptoTransaccionEnum.ENVIO, "ya no me debes nada");
+
+		assertTrue(resultado == ResultadoTransaccionEnum.BILLETERA_DESTINO_NO_ENCONTRADA, "El resultado fue " + resultado);
 	}
 
 }
