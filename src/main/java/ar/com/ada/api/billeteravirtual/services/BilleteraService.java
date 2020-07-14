@@ -10,9 +10,11 @@ import ar.com.ada.api.billeteravirtual.entities.Billetera;
 import ar.com.ada.api.billeteravirtual.entities.Cuenta;
 import ar.com.ada.api.billeteravirtual.entities.Transaccion;
 import ar.com.ada.api.billeteravirtual.entities.Usuario;
+import ar.com.ada.api.billeteravirtual.entities.Transaccion.ConceptoTransaccionEnum;
 import ar.com.ada.api.billeteravirtual.entities.Transaccion.ResultadoTransaccionEnum;
 import ar.com.ada.api.billeteravirtual.entities.Transaccion.TipoTransaccionEnum;
 import ar.com.ada.api.billeteravirtual.repos.BilleteraRepository;
+import ar.com.ada.api.billeteravirtual.sistemas.comm.EmailService;
 
 @Service
 public class BilleteraService {
@@ -23,11 +25,14 @@ public class BilleteraService {
     @Autowired
     UsuarioService usuarioService;
 
+    @Autowired
+    EmailService emailService;
+
     public void grabar(Billetera billetera) {
         billeteraRepository.save(billetera);
     }
 
-    public void cargarSaldo(BigDecimal saldo, String moneda, Integer billeteraId, String conceptoOperacion,
+    public void cargarSaldo(BigDecimal saldo, String moneda, Integer billeteraId, ConceptoTransaccionEnum conceptoOperacion,
             String detalle) {
 
         Billetera billetera = this.buscarPorId(billeteraId);
@@ -43,7 +48,7 @@ public class BilleteraService {
      * 
      */
 
-    public void cargarSaldo(BigDecimal saldo, String moneda, Billetera billetera, String conceptoOperacion,
+    public void cargarSaldo(BigDecimal saldo, String moneda, Billetera billetera, ConceptoTransaccionEnum conceptoOperacion,
             String detalle) {
 
         Cuenta cuenta = billetera.getCuenta(moneda);
@@ -52,7 +57,7 @@ public class BilleteraService {
         // transaccion.setCuenta(cuenta);
         transaccion.setMoneda(moneda);
         transaccion.setFecha(new Date());
-        transaccion.setConceptoOperacion(conceptoOperacion);
+        transaccion.setConceptoOperacion(ConceptoTransaccionEnum.RECARGA);
         transaccion.setDetalle(detalle);
         transaccion.setImporte(saldo);
         transaccion.setTipoOperacion(TipoTransaccionEnum.ENTRANTE);// 1 Entrada, 0 Salida
@@ -63,6 +68,8 @@ public class BilleteraService {
         transaccion.setaCuentaId(cuenta.getCuentaId());
 
         cuenta.agregarTransaccion(transaccion);
+
+        emailService.SendEmail(billetera.getPersona().getUsuario().getEmail(), "Transaccion", "Realizaste una recarga de saldo");
 
         this.grabar(billetera);
 
@@ -89,7 +96,7 @@ public class BilleteraService {
     }
 
     public ResultadoTransaccionEnum enviarSaldo(BigDecimal importe, String moneda, Integer billeteraOrigenId,
-            Integer billeteraDestinoId, String concepto, String detalle) {
+            Integer billeteraDestinoId, ConceptoTransaccionEnum concepto, String detalle) {
 
         if (importe.compareTo(new BigDecimal(0)) == -1)
             return ResultadoTransaccionEnum.ERROR_IMPORTE_NEGATIVO;
@@ -129,11 +136,11 @@ public class BilleteraService {
         Transaccion tSaliente = new Transaccion();
         Transaccion tEntrante = new Transaccion();
 
-        tSaliente = cuentaSaliente.generarTransaccion(concepto, detalle, importe, TipoTransaccionEnum.SALIENTE);
+        tSaliente = cuentaSaliente.generarTransaccion(ConceptoTransaccionEnum.ENVIO, detalle, importe, TipoTransaccionEnum.SALIENTE);
         tSaliente.setaCuentaId(cuentaEntrante.getCuentaId());
         tSaliente.setaUsuarioId(billeteraEntrante.getPersona().getUsuario().getUsuarioId());
 
-        tEntrante = cuentaEntrante.generarTransaccion(concepto, detalle, importe, TipoTransaccionEnum.ENTRANTE);
+        tEntrante = cuentaEntrante.generarTransaccion(ConceptoTransaccionEnum.RECARGA, detalle, importe, TipoTransaccionEnum.ENTRANTE);
         tEntrante.setDeCuentaId(cuentaSaliente.getCuentaId());
         tEntrante.setDeUsuarioId(billeteraSaliente.getPersona().getUsuario().getUsuarioId());
 
@@ -143,12 +150,15 @@ public class BilleteraService {
         this.grabar(billeteraSaliente);
         this.grabar(billeteraEntrante);
 
+        emailService.SendEmail(billeteraSaliente.getPersona().getUsuario().getEmail(), "Transaccion", "Realizaste un envío");
+        emailService.SendEmail(billeteraEntrante.getPersona().getUsuario().getEmail(), "Transaccion", "Recibiste una transferencia");
+
         return ResultadoTransaccionEnum.INICIADA;
 
     }
 
     public ResultadoTransaccionEnum enviarSaldo(BigDecimal importe, String moneda, Integer billeteraOrigenId,
-            String email, String concepto, String detalle) {
+            String email, ConceptoTransaccionEnum concepto, String detalle) {
 
         Usuario usuarioDestino = usuarioService.buscarPorEmail(email);
 

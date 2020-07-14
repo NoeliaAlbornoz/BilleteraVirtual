@@ -24,7 +24,7 @@ public class Transaccion {
 	@Column(name = "tipo_operacion")
     private TipoTransaccionEnum tipoOperacion;
 	@Column(name = "concepto_operacion")
-    private String conceptoOperacion;
+    private ConceptoTransaccionEnum conceptoOperacion;
     private String detalle;
 	@Column(name = "de_usuario_id")
     private Integer deUsuarioId;
@@ -91,11 +91,11 @@ public class Transaccion {
 		this.tipoOperacion = tipoOperacion;
 	}
 
-	public String getConceptoOperacion() {
+	public ConceptoTransaccionEnum getConceptoOperacion() {
 		return conceptoOperacion;
 	}
 
-	public void setConceptoOperacion(String conceptoOperacion) {
+	public void setConceptoOperacion(ConceptoTransaccionEnum conceptoOperacion) {
 		this.conceptoOperacion = conceptoOperacion;
 	}
 
@@ -148,6 +148,11 @@ public class Transaccion {
     public enum TipoTransaccionEnum {
         SALIENTE, // Este es siempre 0
         ENTRANTE // Este es siempre 1
+	}
+	
+	public enum ConceptoTransaccionEnum {
+        RECARGA, // Este es siempre 0
+        ENVIO // Este es siempre 1
     }
 
     public enum ResultadoTransaccionEnum {

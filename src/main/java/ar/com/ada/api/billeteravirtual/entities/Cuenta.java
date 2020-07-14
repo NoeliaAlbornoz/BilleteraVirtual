@@ -5,6 +5,7 @@ import java.util.*;
 
 import javax.persistence.*;
 
+import ar.com.ada.api.billeteravirtual.entities.Transaccion.ConceptoTransaccionEnum;
 import ar.com.ada.api.billeteravirtual.entities.Transaccion.TipoTransaccionEnum;
 
 import org.hibernate.annotations.LazyCollection;
@@ -91,7 +92,7 @@ public class Cuenta {
         this.setSaldo(saldoNuevo);
     }
 
-    public Transaccion generarTransaccion(String conceptoOperacion, String detalle, BigDecimal importe,
+    public Transaccion generarTransaccion(ConceptoTransaccionEnum conceptoOperacion, String detalle, BigDecimal importe,
             TipoTransaccionEnum tipoOp) {
 
         Transaccion transaccion = new Transaccion();
