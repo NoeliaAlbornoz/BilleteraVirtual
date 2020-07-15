@@ -76,7 +76,7 @@ public class BilleteraController {
 
         TransaccionResponse response = new TransaccionResponse();
 
-        billeteraService.cargarSaldo(recarga.importe, recarga.moneda, id, "recarga", "porque quiero");
+        billeteraService.cargarSaldo(recarga.importe, recarga.moneda, id, recarga.motivo, "porque quiero");
 
         response.isOk = true;
         response.message = "Cargaste saldo exisotasamente";
