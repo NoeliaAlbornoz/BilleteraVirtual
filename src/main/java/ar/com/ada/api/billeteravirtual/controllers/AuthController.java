@@ -11,6 +11,7 @@ import ar.com.ada.api.billeteravirtual.entities.Usuario;
 import ar.com.ada.api.billeteravirtual.models.request.LoginRequest;
 import ar.com.ada.api.billeteravirtual.models.request.RegistrationRequest;
 import ar.com.ada.api.billeteravirtual.models.response.JwtResponse;
+import ar.com.ada.api.billeteravirtual.models.response.LoginResponse;
 import ar.com.ada.api.billeteravirtual.models.response.RegistrationResponse;
 import ar.com.ada.api.billeteravirtual.security.jwt.JWTTokenUtil;
 import ar.com.ada.api.billeteravirtual.services.JWTUserDetailsService;
@@ -57,8 +58,19 @@ public class AuthController {
 
         String token = jwtTokenUtil.generateToken(userDetails);
 
-        return ResponseEntity.ok(new JwtResponse(token));
+        //Cambio para que devuelva el full perfil
+       Usuario u = usuarioService.buscarPorUsername(authenticationRequest.username);
 
+       LoginResponse r = new LoginResponse();
+       r.id = u.getUsuarioId();
+       r.billeteraId = u.getPersona().getBilletera().getBilleteraId();
+       r.username = authenticationRequest.username;
+       r.email = u.getEmail();
+       r.token = token;
+
+       return ResponseEntity.ok(r);
+       //return ResponseEntity.ok(new JwtResponse(token));
+       
     }
 
 }
