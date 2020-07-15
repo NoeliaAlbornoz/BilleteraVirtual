@@ -1,7 +1,9 @@
 package ar.com.ada.api.billeteravirtual.services;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -167,6 +169,34 @@ public class BilleteraService {
         return this.enviarSaldo(importe, moneda, billeteraOrigenId,
                 usuarioDestino.getPersona().getBilletera().getBilleteraId(), concepto, detalle);
 
+    }
+
+    public List<Transaccion> listarTransacciones(Billetera billetera, String moneda) {
+
+        List<Transaccion> movimientos = new ArrayList<>();
+
+        Cuenta cuenta = billetera.getCuenta(moneda);
+
+        for (Transaccion transaccion : cuenta.getTransacciones()) {
+
+            movimientos.add(transaccion);
+        }
+
+        return movimientos;
+    }
+
+    public List<Transaccion> listarTransacciones(Billetera billetera) {
+
+        List<Transaccion> movimientos = new ArrayList<>();
+
+        for (Cuenta cuenta : billetera.getCuentas()) {
+
+            for (Transaccion transaccion : cuenta.getTransacciones()) {
+
+                movimientos.add(transaccion);
+            }
+        }
+        return movimientos;
     }
 
 }

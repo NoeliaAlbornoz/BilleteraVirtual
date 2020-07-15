@@ -112,4 +112,14 @@ public class UsuarioService {
         return usuarioRepository.findByEmail(email);
     }
 
+    public Usuario buscarPor(Integer id) {
+        Optional<Usuario> usuarioOp = usuarioRepository.findById(id);
+
+        if(usuarioOp.isPresent()){
+            return usuarioOp.get();
+        }
+
+        return null;
+    }
+
 }
