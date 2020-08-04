@@ -10,8 +10,10 @@
 
 ⚙️ Servicios adicionales: Se utilizó el servicio de MAILGUN para poder notificar con mails transaccionales los movimientos relizados en la billetera.
 
-🔩 Seguridad: Se utilizó JWT Token para seguridad.
+⚙️ Seguridad: Se utilizó JWT Token para seguridad.
 
 ⌨️ GIT: Se trabajaron ramas y se probaron Pull Requests.
+
+🔧 Otros: JPA, Hibernate, Maven.
 
 📦 Deploy: Heroku (url: https://mibilleteravirtual.herokuapp.com). Se utilizó Postgre para base de datos, con la finalidad de consumir el servicio de manera gratuita.
