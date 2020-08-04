@@ -4,7 +4,7 @@
 
 🚀 Base de Datos: relacional MYSQL.
 
-📋 Prueba API: Se utilizó Postman para probar la WEB API.
+🚀 Frontend: Angular.
 
 🔧 Testing: Tests Unitarios.
 
@@ -12,8 +12,10 @@
 
 ⚙️ Seguridad: Se utilizó JWT Token para seguridad.
 
-⌨️ GIT: Se trabajaron ramas y se probaron Pull Requests.
-
 🔧 Otros: JPA, Hibernate, Maven.
+
+📋 Prueba API: Se utilizó Postman para probar la WEB API.
+
+⌨️ GIT: Se trabajaron ramas y se probaron Pull Requests.
 
 📦 Deploy: Heroku (url: https://mibilleteravirtual.herokuapp.com). Se utilizó Postgre para base de datos, con la finalidad de consumir el servicio de manera gratuita.
