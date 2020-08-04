@@ -4,8 +4,6 @@
 
 🚀 Base de Datos: relacional MYSQL.
 
-🚀 Frontend: Angular.
-
 🔧 Testing: Tests Unitarios.
 
 ⚙️ Servicios adicionales: Se utilizó el servicio de MAILGUN para poder notificar con mails transaccionales los movimientos relizados en la billetera.
